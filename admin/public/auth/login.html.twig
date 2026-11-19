@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <base href="{{ base_url }}/">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <title>Iniciar Sesión - {{ site_title|default('Kalabashare') }}</title>
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/bootstrap-icons/bootstrap-icons.css">
+    <script src="assets/vendor/sweetalert/sweetalert2.all.min.js"></script>
+  </head>
+  <body class="bg-body-tertiary min-vh-100 d-flex flex-row align-items-center">
+    <div class="container">
+      <div class="row justify-content-center">
+        <div class="col-md-5 col-lg-4">
+          <div class="card shadow-sm border-0">
+            <div class="card-body p-4">
+              <div class="text-center mb-4">
+                <i class="bi bi-cloud-arrow-down-fill" style="font-size: 2.5rem; color: #0f766e;"></i>
+                <h3 class="fw-bold mt-2 mb-0">KALABASHARE</h3>
+                <p class="text-muted small mt-1">Panel Administrativo</p>
+              </div>
+              <form method="post" action="{{ base_url }}/login">
+                {{ csrf_field() }}
+                <div class="mb-3">
+                  <label class="form-label fw-semibold">Usuario o Correo</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-person"></i></span>
+                    <input type="text" name="username" class="form-control" placeholder="admin" required autofocus>
+                  </div>
+                </div>
+                <div class="mb-4">
+                  <label class="form-label fw-semibold">Contraseña</label>
+                  <div class="input-group">
+                    <span class="input-group-text"><i class="bi bi-lock"></i></span>
+                    <input type="password" name="password" class="form-control" placeholder="••••••" required>
+                  </div>
+                </div>
+                <button type="submit" class="btn w-100 fw-semibold text-white" style="background-color:#0f766e; border-color:#0f766e;">
+                  <i class="bi bi-box-arrow-in-right me-1"></i> Iniciar Sesión
+                </button>
+              </form>
+            </div>
+          </div>
+          <p class="text-center text-muted small mt-3">
+            <a href="https://evilnapsis.com" target="_blank" rel="noopener" class="text-decoration-none text-muted">Evilnapsis</a> &copy; 2026
+          </p>
+        </div>
+      </div>
+    </div>
+    {% if flash_error %}
+    <script>
+      Swal.fire({ title: 'Error', text: {{ flash_error|json_encode|raw }}, icon: 'error' });
+    </script>
+    {% endif %}
+  </body>
+</html>

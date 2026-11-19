@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <base href="{{ base_url }}/">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, shrink-to-fit=no">
+    <meta name="csrf-token" content="{{ csrf_token }}">
+    <title>Kalabashare Admin - {% block title %}Panel{% endblock %}</title>
+    <link rel="stylesheet" href="assets/vendor/simplebar/css/simplebar.css">
+    <link rel="stylesheet" href="assets/css/vendors/simplebar.css">
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link href="assets/css/custom-inventio.css" rel="stylesheet">
+    <script src="assets/vendor/jquery/jquery.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="assets/bootstrap-icons/bootstrap-icons.css">
+    <link rel="stylesheet" type="text/css" href="assets/vendor/datatables/datatables.min.css">
+    <link rel="stylesheet" type="text/css" href="assets/vendor/select2/select2.min.css">
+    <script type="text/javascript" src="assets/vendor/sweetalert/sweetalert2.all.min.js"></script>
+  </head>
+  <body>
+    <div class="sidebar sidebar-dark sidebar-fixed border-end" id="sidebar">
+      <div class="sidebar-header border-bottom">
+        <a class="sidebar-brand text-decoration-none d-flex align-items-center justify-content-center" href="{{ base_url }}/home">
+          <span class="sidebar-brand-full fw-bold text-white" style="font-size:17px;">
+            <i class="bi bi-cloud-arrow-down-fill text-primary me-2"></i>KALABASHARE
+          </span>
+          <span class="sidebar-brand-narrow fw-bold text-white" style="font-size: 16px;">KS</span>
+        </a>
+        <button class="btn-close d-lg-none" type="button" data-coreui-dismiss="offcanvas" data-coreui-theme="dark" aria-label="Close" onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()"></button>
+      </div>
+      <ul class="sidebar-nav" data-coreui-navigation data-simplebar="">
+        <li class="nav-item">
+          <a class="nav-link" href="{{ base_url }}/home">
+            <i class="nav-icon bi bi-speedometer2"></i> Dashboard
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ base_url }}/posts">
+            <i class="nav-icon bi bi-file-earmark-arrow-down"></i> Archivos
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ base_url }}/categories">
+            <i class="nav-icon bi bi-tags"></i> Categorías
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ base_url }}/clients">
+            <i class="nav-icon bi bi-person-lines-fill"></i> Clientes
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ base_url }}/slides">
+            <i class="nav-icon bi bi-images"></i> Sliders
+          </a>
+        </li>
+        {% if curr_user.role == 'admin' %}
+        <li class="nav-item">
+          <a class="nav-link" href="{{ base_url }}/users">
+            <i class="nav-icon bi bi-people"></i> Usuarios
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="{{ base_url }}/settings">
+            <i class="nav-icon bi bi-gear"></i> Configuración
+          </a>
+        </li>
+        {% endif %}
+      </ul>
+      <div class="sidebar-footer border-top d-none d-md-flex">
+        <button class="sidebar-toggler" type="button" data-coreui-toggle="unfoldable"></button>
+      </div>
+    </div>
+
+    <div class="wrapper d-flex flex-column min-vh-100">
+      <header class="header header-sticky p-0 mb-4">
+        <div class="container-fluid border-bottom px-4">
+          <button class="header-toggler" type="button" onclick="coreui.Sidebar.getInstance(document.querySelector('#sidebar')).toggle()" style="margin-inline-start: -14px;">
+            <i class="bi bi-list fs-4"></i>
+          </button>
+          <ul class="header-nav d-none d-md-flex">
+            <li class="nav-item">
+              <a class="nav-link fw-semibold text-primary" href="{{ base_url|replace({'/admin': ''}) }}/" target="_blank">
+                <i class="bi bi-globe me-1"></i> Ver Portal Público
+              </a>
+            </li>
+          </ul>
+          <ul class="header-nav ms-auto">
+            <li class="nav-item dropdown">
+              <a class="nav-link py-0 pe-0 d-flex align-items-center" data-coreui-toggle="dropdown" href="#" role="button" aria-haspopup="true" aria-expanded="false">
+                <span class="me-2 d-none d-sm-inline text-end">
+                  <span class="d-block fw-semibold small">{{ curr_user.name }} {{ curr_user.lastname }}</span>
+                  <span class="d-block text-muted" style="font-size: 11px;">{{ curr_user.role == 'admin' ? 'Administrador' : 'Editor' }}</span>
+                </span>
+                <div class="avatar avatar-md bg-primary text-white d-flex align-items-center justify-content-center rounded-circle">
+                  <i class="bi bi-person-fill"></i>
+                </div>
+              </a>
+              <div class="dropdown-menu dropdown-menu-end pt-0">
+                <div class="dropdown-header bg-body-tertiary text-body-secondary fw-semibold rounded-top mb-2">Mi Cuenta</div>
+                <a class="dropdown-item" href="{{ base_url }}/profile">
+                  <i class="bi bi-person me-2"></i> Perfil
+                </a>
+                {% if curr_user.role == 'admin' %}
+                <a class="dropdown-item" href="{{ base_url }}/settings">
+                  <i class="bi bi-gear me-2"></i> Configuración
+                </a>
+                {% endif %}
+                <div class="dropdown-divider"></div>
+                <a class="dropdown-item text-danger" href="{{ base_url }}/logout">
+                  <i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión
+                </a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </header>
+
+      <div class="body flex-grow-1">
+        <div class="container-fluid px-4">
+          {% block content %}{% endblock %}
+        </div>
+      </div>
+
+      <footer class="footer px-4 mt-4">
+        <div><a href="https://evilnapsis.com" target="_blank" rel="noopener" class="text-decoration-none">Evilnapsis</a> &copy; 2026</div>
+        <div class="ms-auto">Kalabashare</div>
+      </footer>
+    </div>
+
+    <script src="assets/vendor/@coreui/coreui/js/coreui.bundle.min.js"></script>
+    <script>
+      if (typeof window.bootstrap === 'undefined' && typeof window.coreui !== 'undefined') {
+        window.bootstrap = window.coreui;
+      }
+    </script>
+    <script src="assets/vendor/simplebar/js/simplebar.min.js"></script>
+    <script src="assets/vendor/chart.js/js/chart.min.js"></script>
+    <script src="assets/vendor/datatables/datatables.min.js"></script>
+    <script src="assets/vendor/select2/select2.full.min.js"></script>
+    <script type="text/javascript">
+      $(document).ready(function(){
+        $(".table:has(thead)").not(".no-datatable").DataTable({
+          "responsive": true,
+          "order": [],
+          "language": {
+            "url": "{{ base_url }}/assets/vendor/datatables/esmx.json"
+          }
+        });
+
+        if ($.fn.select2) {
+          $('.select2').each(function() {
+            $(this).select2({ width: '100%', dropdownParent: $(this).parent() });
+          });
+        }
+
+        {% if flash_success %}
+          Swal.fire({ title: '¡Éxito!', text: {{ flash_success|json_encode|raw }}, icon: 'success', timer: 3500, timerProgressBar: true });
+        {% endif %}
+        {% if flash_updated %}
+          Swal.fire({ title: '¡Actualizado!', text: {{ flash_updated|json_encode|raw }}, icon: 'success', timer: 3500, timerProgressBar: true });
+        {% endif %}
+        {% if flash_deleted %}
+          Swal.fire({ title: 'Eliminado', text: {{ flash_deleted|json_encode|raw }}, icon: 'success', timer: 3500, timerProgressBar: true });
+        {% endif %}
+        {% if flash_error %}
+          Swal.fire({ title: 'Error', text: {{ flash_error|json_encode|raw }}, icon: 'error' });
+        {% endif %}
+
+        const currentPath = window.location.pathname.replace(/\/+$/, '');
+        $('#sidebar .sidebar-nav a.nav-link').each(function() {
+          const href = $(this).attr('href');
+          if (href && href !== '#') {
+            const cleanHref = href.replace(/\/+$/, '');
+            if (cleanHref === currentPath || (cleanHref !== '' && (currentPath + '/').indexOf(cleanHref + '/') === 0)) {
+              $(this).addClass('active');
+            }
+          }
+        });
+
+        $(document).on('submit', 'form.confirm-post', function(e) {
+          e.preventDefault();
+          const form = this;
+          const msg = $(form).data('confirm') || '¿Confirmar esta acción?';
+          Swal.fire({
+            title: 'Confirmar',
+            text: msg,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#d33',
+            cancelButtonColor: '#6c757d',
+            confirmButtonText: 'Sí, continuar',
+            cancelButtonText: 'Cancelar',
+            reverseButtons: true
+          }).then((result) => {
+            if (result.isConfirmed) form.submit();
+          });
+        });
+      });
+    </script>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

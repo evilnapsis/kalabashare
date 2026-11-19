@@ -1,0 +1,30 @@
+{% extends "layouts/main.html.twig" %}
+
+{% block title %}Configuración{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0 fw-bold">Configuración</h3>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <form method="post" action="{{ base_url }}/settings/update" class="row g-3">
+      {{ csrf_field() }}
+      {% for cfg in configs %}
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">{{ cfg.label }}</label>
+        {% if cfg.kind == 'textarea' %}
+        <textarea name="{{ cfg.name }}" rows="3" class="form-control">{{ cfg.val }}</textarea>
+        {% else %}
+        <input type="{{ cfg.kind == 'number' ? 'number' : 'text' }}" name="{{ cfg.name }}" value="{{ cfg.val }}" class="form-control">
+        {% endif %}
+      </div>
+      {% endfor %}
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary px-4"><i class="bi bi-save me-1"></i> Guardar Configuración</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

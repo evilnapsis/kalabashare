@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <base href="{{ base_url }}/">
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{{ site_config.general_main_title|default('KALABASHARE') }}{% endblock %}</title>
+    <link href="assets/css/style.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/bootstrap-icons/bootstrap-icons.css">
+    <script src="assets/vendor/sweetalert/sweetalert2.all.min.js"></script>
+    <style>
+      :root {
+        --ks-teal: #0f766e;
+        --ks-teal-light: #14b8a6;
+        --ks-teal-dark: #134e4a;
+        --ks-mint-bg: #f0fdfa;
+      }
+      body { background-color: #f4f7f6 !important; color: #0f172a; }
+      .ks-navbar { background: #ffffff; border-bottom: 2px solid #e2e8f0; }
+      .ks-brand-icon { width: 34px; height: 34px; background: var(--ks-teal); color: #fff; border-radius: 9px; display: inline-flex; align-items: center; justify-content: center; }
+      .btn-ks { background-color: var(--ks-teal); border-color: var(--ks-teal); color: #fff; }
+      .btn-ks:hover { background-color: var(--ks-teal-dark); border-color: var(--ks-teal-dark); color: #fff; }
+      .btn-outline-ks { border-color: var(--ks-teal); color: var(--ks-teal); }
+      .btn-outline-ks:hover { background-color: var(--ks-teal); color: #fff; }
+      .text-ks { color: var(--ks-teal) !important; }
+      .bg-ks-soft { background-color: var(--ks-mint-bg); color: var(--ks-teal-dark); }
+      .ks-hero {
+        background: linear-gradient(135deg, #134e4a 0%, #0f766e 60%, #0d9488 100%);
+        border-radius: 18px;
+        color: #fff;
+      }
+      .ks-file-row {
+        background: #fff;
+        border: 1px solid #e2e8f0;
+        border-radius: 12px;
+        transition: transform .15s ease, box-shadow .15s ease, border-color .15s ease;
+      }
+      .ks-file-row:hover {
+        transform: translateY(-2px);
+        border-color: #99f6e4;
+        box-shadow: 0 8px 20px rgba(15, 118, 110, 0.08);
+      }
+      .ks-file-icon {
+        width: 52px;
+        height: 52px;
+        border-radius: 12px;
+        background: var(--ks-mint-bg);
+        color: var(--ks-teal);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.5rem;
+        flex-shrink: 0;
+      }
+    </style>
+  </head>
+  <body class="d-flex flex-column min-vh-100">
+    <nav class="navbar navbar-expand-lg navbar-light ks-navbar sticky-top py-2">
+      <div class="container">
+        <a class="navbar-brand fw-bold d-flex align-items-center text-dark" href="{{ base_url }}/">
+          <span class="ks-brand-icon me-2"><i class="bi bi-cloud-arrow-down-fill"></i></span>
+          <span>{{ site_config.general_main_title|default('KALABASHARE') }}</span>
+        </a>
+        <button class="navbar-toggler" type="button" data-coreui-toggle="collapse" data-coreui-target="#publicNav">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="publicNav">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0 ms-lg-3">
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="{{ base_url }}/">Inicio</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="{{ base_url }}/posts">Explorar</a>
+            </li>
+            {% if menu_categories is not empty %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle fw-semibold" href="#" role="button" data-coreui-toggle="dropdown">
+                Categorías
+              </a>
+              <ul class="dropdown-menu shadow-sm border-0">
+                {% for cat in menu_categories %}
+                <li><a class="dropdown-item" href="{{ base_url }}/category/{{ cat.short_name }}">{{ cat.name }}</a></li>
+                {% endfor %}
+              </ul>
+            </li>
+            {% endif %}
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="{{ base_url }}/contact">Contacto</a>
+            </li>
+          </ul>
+          <form class="d-flex me-lg-3 my-2 my-lg-0" method="get" action="{{ base_url }}/search">
+            <div class="input-group input-group-sm">
+              <input class="form-control bg-light" type="search" name="q" value="{{ search_query|default('') }}" placeholder="Buscar archivos...">
+              <button class="btn btn-ks" type="submit"><i class="bi bi-search"></i></button>
+            </div>
+          </form>
+          <ul class="navbar-nav align-items-lg-center gap-1">
+            {% if curr_client %}
+            <li class="nav-item">
+              <a class="btn btn-ks btn-sm rounded-pill px-3" href="{{ base_url }}/client/posts/new">
+                <i class="bi bi-cloud-upload me-1"></i> Subir
+              </a>
+            </li>
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle fw-semibold text-dark" href="#" role="button" data-coreui-toggle="dropdown">
+                <i class="bi bi-person-circle text-ks me-1"></i> {{ curr_client.name }}
+              </a>
+              <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0">
+                <li><a class="dropdown-item" href="{{ base_url }}/client"><i class="bi bi-folder2-open me-2"></i>Mis Archivos</a></li>
+                <li><a class="dropdown-item" href="{{ base_url }}/client/posts/new"><i class="bi bi-cloud-upload me-2"></i>Subir Archivo</a></li>
+                <li><hr class="dropdown-divider"></li>
+                <li><a class="dropdown-item text-danger" href="{{ base_url }}/logout"><i class="bi bi-box-arrow-right me-2"></i>Cerrar Sesión</a></li>
+              </ul>
+            </li>
+            {% else %}
+            <li class="nav-item">
+              <a class="nav-link fw-semibold" href="{{ base_url }}/login">Iniciar Sesión</a>
+            </li>
+            <li class="nav-item">
+              <a class="btn btn-ks btn-sm rounded-pill px-3" href="{{ base_url }}/register">
+                <i class="bi bi-cloud-upload me-1"></i> Subir Archivo
+              </a>
+            </li>
+            {% endif %}
+          </ul>
+        </div>
+      </div>
+    </nav>
+
+    <main class="flex-grow-1 py-4">
+      <div class="container">
+        {% block content %}{% endblock %}
+      </div>
+    </main>
+
+    <footer class="bg-white border-top py-4 mt-auto text-muted">
+      <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center gap-2 small">
+        <div>
+          <strong class="text-dark">{{ site_config.general_main_title|default('KALABASHARE') }}</strong> — {{ site_config.general_subtitle|default('Plataforma de Descarga de Archivos') }}
+        </div>
+        <div>
+          <a href="https://evilnapsis.com" target="_blank" rel="noopener" class="text-ks text-decoration-none fw-semibold">Evilnapsis</a> &copy; 2026
+          <span class="mx-2">|</span>
+          <a href="{{ base_url }}/admin/" class="text-muted text-decoration-none">Panel Admin</a>
+        </div>
+      </div>
+    </footer>
+
+    <script src="assets/vendor/@coreui/coreui/js/coreui.bundle.min.js"></script>
+    {% if flash_success %}
+    <script>Swal.fire({ title: '¡Listo!', text: {{ flash_success|json_encode|raw }}, icon: 'success', confirmButtonColor: '#0f766e' });</script>
+    {% endif %}
+    {% if flash_updated %}
+    <script>Swal.fire({ title: '¡Actualizado!', text: {{ flash_updated|json_encode|raw }}, icon: 'success', confirmButtonColor: '#0f766e' });</script>
+    {% endif %}
+    {% if flash_deleted %}
+    <script>Swal.fire({ title: 'Eliminado', text: {{ flash_deleted|json_encode|raw }}, icon: 'success', confirmButtonColor: '#0f766e' });</script>
+    {% endif %}
+    {% if flash_error %}
+    <script>Swal.fire({ title: 'Error', text: {{ flash_error|json_encode|raw }}, icon: 'error' });</script>
+    {% endif %}
+  </body>
+</html>

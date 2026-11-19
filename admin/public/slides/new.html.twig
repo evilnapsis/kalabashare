@@ -1,0 +1,43 @@
+{% extends "layouts/main.html.twig" %}
+
+{% block title %}Nuevo Slide{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0 fw-bold">Nuevo Slide</h3>
+  <a href="{{ base_url }}/slides" class="btn btn-outline-secondary">Volver</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <form method="post" action="{{ base_url }}/slides/create" enctype="multipart/form-data" class="row g-3">
+      {{ csrf_field() }}
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Título</label>
+        <input type="text" name="title" class="form-control">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Enlace (opcional)</label>
+        <input type="url" name="link" class="form-control" placeholder="https://...">
+      </div>
+      <div class="col-md-2">
+        <label class="form-label fw-semibold">Posición</label>
+        <input type="number" name="position" value="1" min="1" class="form-control">
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Imagen *</label>
+        <input type="file" name="image" accept="image/*" class="form-control" required>
+      </div>
+      <div class="col-md-6 d-flex align-items-end">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="is_public" id="isPublic" checked>
+          <label class="form-check-label" for="isPublic">Publicado</label>
+        </div>
+      </div>
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary px-4"><i class="bi bi-save me-1"></i> Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

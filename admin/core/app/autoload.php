@@ -1,15 +1,22 @@
 <?php
-// autoload.php
-// 10 octubre del 2014
-// esta funcion elimina el hecho de estar agregando los modelos manualmente
 
+function kat2_admin_autoload($classname) {
+	if (Model::exists($classname)) {
+		include Model::getFullpath($classname);
+		return;
+	}
 
-function __autoload($modelname){
-	if(Model::exists($modelname)){
-		include Model::getFullPath($modelname);
+	if (strpos($classname, 'App\\') === 0) {
+		$parts = explode('\\', $classname);
+		if (count($parts) >= 3) {
+			$subfolder = strtolower($parts[1]);
+			$file = $parts[2];
+			$fullpath = __DIR__ . "/" . $subfolder . "/" . $file . ".php";
+			if (file_exists($fullpath)) {
+				include $fullpath;
+			}
+		}
 	}
 }
 
-
-
-?>
+spl_autoload_register("kat2_admin_autoload", true, true);

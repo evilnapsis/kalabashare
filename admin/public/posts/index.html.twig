@@ -1,0 +1,72 @@
+{% extends "layouts/main.html.twig" %}
+
+{% block title %}Archivos{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0 fw-bold">Archivos</h3>
+  <a href="{{ base_url }}/posts/new" class="btn btn-primary">
+    <i class="bi bi-plus-circle me-1"></i> Nuevo Archivo
+  </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Portada</th>
+            <th>Nombre</th>
+            <th>Categoría</th>
+            <th>Autor</th>
+            <th>Archivo</th>
+            <th>Descargas</th>
+            <th>Visible</th>
+            <th class="text-end">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for p in posts %}
+          <tr>
+            <td>
+              {% if p.image %}
+              <img src="storage/products/{{ p.image }}" alt="{{ p.name }}" style="width:46px; height:46px; object-fit:cover;" class="rounded border">
+              {% else %}
+              <div class="bg-light border rounded d-flex align-items-center justify-content-center text-muted" style="width:46px; height:46px;"><i class="bi bi-file-earmark"></i></div>
+              {% endif %}
+            </td>
+            <td>
+              <div class="fw-semibold">{{ p.name }}</div>
+              {% if p.offer_txt %}<span class="badge bg-info text-dark">{{ p.offer_txt }}</span>{% endif %}
+            </td>
+            <td class="small">{{ p.category_name }}</td>
+            <td class="small">{{ p.author_name }}</td>
+            <td class="small">
+              {% if p.file %}
+              <a href="storage/files/{{ p.file }}" target="_blank" class="badge bg-dark text-decoration-none"><i class="bi bi-download me-1"></i>Archivo</a>
+              {% elseif p.link %}
+              <a href="{{ p.link }}" target="_blank" class="badge bg-primary text-decoration-none"><i class="bi bi-link-45deg me-1"></i>Enlace</a>
+              {% else %}
+              <span class="text-muted">-</span>
+              {% endif %}
+            </td>
+            <td><span class="badge bg-light text-dark border">{{ p.downloads }}</span></td>
+            <td>
+              <span class="badge bg-{{ p.is_public ? 'success' : 'secondary' }}">{{ p.is_public ? 'Público' : 'Oculto' }}</span>
+            </td>
+            <td class="text-end text-nowrap">
+              <a href="{{ base_url }}/posts/{{ p.id }}/edit" class="btn btn-xs btn-outline-warning"><i class="bi bi-pencil"></i></a>
+              <form method="post" action="{{ base_url }}/posts/{{ p.id }}/delete" class="d-inline confirm-post" data-confirm="¿Eliminar archivo {{ p.name }}?">
+                {{ csrf_field() }}
+                <button type="submit" class="btn btn-xs btn-outline-danger"><i class="bi bi-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

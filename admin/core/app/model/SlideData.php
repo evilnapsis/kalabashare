@@ -1,71 +1,82 @@
 <?php
+
+#[\AllowDynamicProperties]
 class SlideData {
 	public static $tablename = "slide";
 
+	public $id;
+	public $title;
+	public $image;
+	public $link;
+	public $position;
+	public $is_public;
+	public $created_at;
+	public $updated_at;
 
-	public function SlideData(){
+	public function __construct() {
 		$this->title = "";
-		$this->content = "";
 		$this->image = "";
 		$this->link = "";
-		$this->category_id = "";
-		$this->is_public = "0";
-		$this->created_at = "NOW()";
+		$this->position = 1;
+		$this->is_public = 1;
+		$this->created_at = date("Y-m-d H:i:s");
+		$this->updated_at = date("Y-m-d H:i:s");
 	}
 
-	public function add(){
-		$sql = "insert into ".self::$tablename." (title,image,is_public,created_at) ";
-		$sql .= "value (\"$this->title\",\"$this->image\",$this->is_public,$this->created_at)";
-		Executor::doit($sql);
+	private static function db(): \PDO {
+		return Database::getPdo();
 	}
 
-	public static function delById($id){
-		$sql = "delete from ".self::$tablename." where id=$id";
-		Executor::doit($sql);
-	}
-	public function del(){
-		$sql = "delete from ".self::$tablename." where id=$this->id";
-		Executor::doit($sql);
-	}
-
-// partiendo de que ya tenemos creado un objecto SlideData previamente utilizamos el contexto
-	public function update(){
-		$sql = "update ".self::$tablename." set title=\"$this->title\",is_public=\"$this->is_public\" where id=$this->id";
-		Executor::doit($sql);
-	}
-
-	public function update_image(){
-		$sql = "update ".self::$tablename." set image=\"$this->image\" where id=$this->id";
-		Executor::doit($sql);
+	public function add(): int {
+		$stmt = self::db()->prepare(
+			"INSERT INTO " . self::$tablename . " (title, image, link, position, is_public) " .
+			"VALUES (:title, :image, :link, :position, :is_public)"
+		);
+		$stmt->execute([
+			'title' => $this->title ?: null,
+			'image' => $this->image,
+			'link' => $this->link ?: null,
+			'position' => (int)$this->position,
+			'is_public' => $this->is_public ? 1 : 0,
+		]);
+		$this->id = (int)self::db()->lastInsertId();
+		return $this->id;
 	}
 
-	public static function getById($id){
-		$sql = "select * from ".self::$tablename." where id=$id";
-		$query = Executor::doit($sql);
-		return Model::one($query[0],new SlideData());
+	public function update(): bool {
+		$stmt = self::db()->prepare(
+			"UPDATE " . self::$tablename . " SET title = :title, image = :image, link = :link, " .
+			"position = :position, is_public = :is_public WHERE id = :id"
+		);
+		return $stmt->execute([
+			'title' => $this->title ?: null,
+			'image' => $this->image,
+			'link' => $this->link ?: null,
+			'position' => (int)$this->position,
+			'is_public' => $this->is_public ? 1 : 0,
+			'id' => (int)$this->id,
+		]);
 	}
 
-
-
-	public static function getAll(){
-		$sql = "select * from ".self::$tablename." order by created_at desc";
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new SlideData());
+	public static function getById($id): ?self {
+		$stmt = self::db()->prepare("SELECT * FROM " . self::$tablename . " WHERE id = :id LIMIT 1");
+		$stmt->execute(['id' => (int)$id]);
+		$stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::class);
+		return $stmt->fetch() ?: null;
 	}
 
-	public static function getPublics(){
-		$sql = "select * from ".self::$tablename." where  is_public=1 order by created_at desc";
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new SlideData());
+	public static function getAll(): array {
+		$stmt = self::db()->query("SELECT * FROM " . self::$tablename . " ORDER BY position ASC, id DESC");
+		return $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::class);
 	}
 
-	public static function getLike($q){
-		$sql = "select * from ".self::$tablename." where title like '%$q%' or content like '%$q%'";
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new SlideData());
+	public static function getPublics(): array {
+		$stmt = self::db()->query("SELECT * FROM " . self::$tablename . " WHERE is_public = 1 ORDER BY position ASC, id DESC");
+		return $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::class);
 	}
 
-
+	public static function delById($id): bool {
+		$stmt = self::db()->prepare("DELETE FROM " . self::$tablename . " WHERE id = :id");
+		return $stmt->execute(['id' => (int)$id]);
+	}
 }
-
-?>

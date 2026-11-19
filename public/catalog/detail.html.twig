@@ -1,0 +1,76 @@
+{% extends "layouts/main.html.twig" %}
+
+{% block title %}{{ post.name }} | {{ site_config.general_main_title|default('KALABASHARE') }}{% endblock %}
+
+{% block content %}
+<nav aria-label="breadcrumb" class="mb-3">
+  <ol class="breadcrumb small">
+    <li class="breadcrumb-item"><a href="{{ base_url }}/" class="text-ks text-decoration-none">Inicio</a></li>
+    <li class="breadcrumb-item"><a href="{{ base_url }}/category/{{ post.category_slug }}" class="text-ks text-decoration-none">{{ post.category_name }}</a></li>
+    <li class="breadcrumb-item active">{{ post.name }}</li>
+  </ol>
+</nav>
+
+<div class="row g-4">
+  <div class="col-lg-8">
+    <div class="card border-0 shadow-sm rounded-4">
+      <div class="card-body p-4">
+        <div class="d-flex align-items-start gap-3 mb-3">
+          <div class="ks-file-icon" style="width:64px; height:64px; font-size:2rem;">
+            {% if post.image %}
+            <img src="admin/storage/products/{{ post.image }}" alt="{{ post.name }}" style="width:64px; height:64px; object-fit:cover; border-radius:12px;">
+            {% else %}
+            <i class="bi bi-file-earmark-arrow-down-fill"></i>
+            {% endif %}
+          </div>
+          <div>
+            <div class="mb-1">
+              <span class="badge bg-ks-soft border me-1">{{ post.category_name }}</span>
+              {% if post.offer_txt %}<span class="badge bg-dark">{{ post.offer_txt }}</span>{% endif %}
+            </div>
+            <h2 class="fw-bold mb-0">{{ post.name }}</h2>
+          </div>
+        </div>
+        <hr>
+        <h6 class="fw-bold text-uppercase small text-muted mb-2">Descripción</h6>
+        <p class="mb-0" style="white-space: pre-line;">{{ post.description ?: 'Sin descripción adicional.' }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-4">
+    <div class="card border-0 shadow-sm rounded-4">
+      <div class="card-body p-4">
+        {% if post.file or post.link %}
+        <a href="{{ base_url }}/post/{{ post.id }}/download" class="btn btn-ks btn-lg w-100 rounded-pill fw-semibold mb-3">
+          <i class="bi bi-cloud-download me-2"></i> Descargar Archivo
+        </a>
+        {% else %}
+        <div class="alert alert-warning small mb-3">Archivo sin enlace de descarga disponible.</div>
+        {% endif %}
+
+        <ul class="list-group list-group-flush small">
+          <li class="list-group-item d-flex justify-content-between px-0">
+            <span class="text-muted">Autor</span>
+            <span class="fw-semibold">{{ post.author_name }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between px-0">
+            <span class="text-muted">Descargas</span>
+            <span class="fw-semibold">{{ post.downloads }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between px-0">
+            <span class="text-muted">Vistas</span>
+            <span class="fw-semibold">{{ post.views_count }}</span>
+          </li>
+          <li class="list-group-item d-flex justify-content-between px-0">
+            <span class="text-muted">Publicado</span>
+            <span class="fw-semibold">{{ post.created_at|date('d/m/Y') }}</span>
+          </li>
+        </ul>
+
+        <a href="{{ base_url }}/posts" class="btn btn-outline-secondary btn-sm w-100 rounded-pill mt-3">Volver a Explorar</a>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

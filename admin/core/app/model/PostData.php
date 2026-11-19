@@ -1,111 +1,169 @@
 <?php
+
+#[\AllowDynamicProperties]
 class PostData {
 	public static $tablename = "post";
 
+	public $id;
+	public $category_id;
+	public $client_id;
+	public $code;
+	public $name;
+	public $short_name;
+	public $description;
+	public $offer_txt;
+	public $image;
+	public $file;
+	public $link;
+	public $downloads;
+	public $is_featured;
+	public $is_public;
+	public $created_at;
+	public $updated_at;
 
-	public function PostData(){
-		$this->title = "";
-		$this->content = "";
+	// Navegación
+	public $category_name = "";
+	public $category_slug = "";
+	public $author_name = "";
+	public $views_count = 0;
+
+	public function __construct() {
+		$this->category_id = 1;
+		$this->client_id = null;
+		$this->code = "";
+		$this->name = "";
+		$this->short_name = "";
+		$this->description = "";
+		$this->offer_txt = "";
 		$this->image = "";
+		$this->file = "";
 		$this->link = "";
-		$this->category_id = "";
-		$this->is_public = "0";
-		$this->created_at = "NOW()";
+		$this->downloads = 0;
+		$this->is_featured = 0;
+		$this->is_public = 1;
+		$this->created_at = date("Y-m-d H:i:s");
+		$this->updated_at = date("Y-m-d H:i:s");
 	}
 
-	public function getUnit(){ return UnitData::getById($this->unit_id);}
-
-	public function add(){
-		$sql = "insert into ".self::$tablename." (short_name,name,description,file,link,category_id,is_public,is_featured,created_at) ";
-		$sql .= "value (\"$this->short_name\",\"$this->name\",\"$this->description\",\"$this->file\",\"$this->link\",$this->category_id,$this->is_public,$this->is_featured,$this->created_at)";
-		Executor::doit($sql);
+	private static function db(): \PDO {
+		return Database::getPdo();
 	}
 
-		public function add2(){
-		$sql = "insert into ".self::$tablename." (short_name,code,name,description,file,link,category_id,is_public,is_featured,client_id, created_at) ";
-		$sql .= "value (\"$this->short_name\",\"$this->code\",\"$this->name\",\"$this->description\",\"$this->file\",\"$this->link\",$this->category_id,$this->is_public,$this->is_featured,$this->client_id,$this->created_at)";
-		Executor::doit($sql);
+	public function add(): int {
+		$stmt = self::db()->prepare(
+			"INSERT INTO " . self::$tablename . " (category_id, client_id, code, name, short_name, description, offer_txt, image, file, link, is_featured, is_public) " .
+			"VALUES (:category_id, :client_id, :code, :name, :short_name, :description, :offer_txt, :image, :file, :link, :is_featured, :is_public)"
+		);
+		$stmt->execute([
+			'category_id' => (int)$this->category_id,
+			'client_id' => $this->client_id ?: null,
+			'code' => $this->code ?: null,
+			'name' => $this->name,
+			'short_name' => $this->short_name ?: null,
+			'description' => $this->description ?: null,
+			'offer_txt' => $this->offer_txt ?: null,
+			'image' => $this->image ?: null,
+			'file' => $this->file ?: null,
+			'link' => $this->link ?: null,
+			'is_featured' => $this->is_featured ? 1 : 0,
+			'is_public' => $this->is_public ? 1 : 0,
+		]);
+		$this->id = (int)self::db()->lastInsertId();
+		return $this->id;
 	}
 
-	public static function delById($id){
-		$sql = "delete from ".self::$tablename." where id=$id";
-		Executor::doit($sql);
-	}
-	public function del(){
-		$sql = "delete from ".self::$tablename." where id=$this->id";
-		Executor::doit($sql);
-	}
-
-// partiendo de que ya tenemos creado un objecto PostData previamente utilizamos el contexto
-	public function update(){
-		$sql = "update ".self::$tablename." set name=\"$this->name\",description=\"$this->description\",file=\"$this->file\",is_public=\"$this->is_public\",is_featured=\"$this->is_featured\",category_id=\"$this->category_id\" where id=$this->id";
-		Executor::doit($sql);
-	}
-	public function update2(){
-		$sql = "update ".self::$tablename." set name=\"$this->name\",description=\"$this->description\",file=\"$this->file\",category_id=\"$this->category_id\" where id=$this->id";
-		Executor::doit($sql);
-	}
-	public function update_image(){
-		$sql = "update ".self::$tablename." set image=\"$this->image\" where id=$this->id";
-		Executor::doit($sql);
-	}
-
-	public static function getById($id){
-		$sql = "select * from ".self::$tablename." where id=$id";
-		$query = Executor::doit($sql);
-		return Model::one($query[0],new PostData());
+	public function update(): bool {
+		$stmt = self::db()->prepare(
+			"UPDATE " . self::$tablename . " SET category_id = :category_id, client_id = :client_id, code = :code, name = :name, " .
+			"short_name = :short_name, description = :description, offer_txt = :offer_txt, image = :image, file = :file, " .
+			"link = :link, is_featured = :is_featured, is_public = :is_public WHERE id = :id"
+		);
+		return $stmt->execute([
+			'category_id' => (int)$this->category_id,
+			'client_id' => $this->client_id ?: null,
+			'code' => $this->code ?: null,
+			'name' => $this->name,
+			'short_name' => $this->short_name ?: null,
+			'description' => $this->description ?: null,
+			'offer_txt' => $this->offer_txt ?: null,
+			'image' => $this->image ?: null,
+			'file' => $this->file ?: null,
+			'link' => $this->link ?: null,
+			'is_featured' => $this->is_featured ? 1 : 0,
+			'is_public' => $this->is_public ? 1 : 0,
+			'id' => (int)$this->id,
+		]);
 	}
 
-
-
-	public static function getAll(){
-		$sql = "select * from ".self::$tablename." order by created_at desc";
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new PostData());
-	}
-	public static function getAllByClient($id){
-		$sql = "select * from ".self::$tablename." where client_id=$id order by created_at desc";
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new postData());
-	}
-	public static function getPublicsByCategoryId($id){
-		$sql = "select * from ".self::$tablename." where category_id=$id and is_public=1 order by created_at desc";
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new PostData());
+	public static function incrementDownloads(int $id): void {
+		$stmt = self::db()->prepare("UPDATE " . self::$tablename . " SET downloads = downloads + 1 WHERE id = :id");
+		$stmt->execute(['id' => $id]);
 	}
 
-	public static function get4News(){
-		$sql = "select * from ".self::$tablename." where is_new=1 and is_public=1 order by created_at desc limit 4";
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new PostData());
+	private static function baseSelectSql(): string {
+		return "SELECT p.*, c.name AS category_name, c.short_name AS category_slug, " .
+			"COALESCE(CONCAT(cl.name, ' ', COALESCE(cl.lastname, '')), 'Administrador') AS author_name, " .
+			"(SELECT COUNT(*) FROM post_view pv WHERE pv.post_id = p.id) AS views_count " .
+			"FROM " . self::$tablename . " p " .
+			"INNER JOIN category c ON c.id = p.category_id " .
+			"LEFT JOIN client cl ON cl.id = p.client_id ";
 	}
 
-	public static function get4Offers(){
-		$sql = "select * from ".self::$tablename." where is_offer=1 and is_public=1 order by created_at desc limit 4";
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new PostData());
+	public static function getById($id): ?self {
+		$stmt = self::db()->prepare(self::baseSelectSql() . "WHERE p.id = :id LIMIT 1");
+		$stmt->execute(['id' => (int)$id]);
+		$stmt->setFetchMode(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::class);
+		return $stmt->fetch() ?: null;
 	}
 
-	public static function getNews(){
-		$sql = "select * from ".self::$tablename." where is_new=1 and is_public=1 order by created_at desc limit 4";
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new PostData());
+	public static function getAll(): array {
+		$stmt = self::db()->query(self::baseSelectSql() . "ORDER BY p.id DESC");
+		return $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::class);
 	}
 
-	public static function getFeatureds(){
-		$sql = "select * from ".self::$tablename." where is_featured=1 and is_public=1 order by created_at desc limit 6";
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new PostData());
+	public static function getByClientId(int $clientId): array {
+		$stmt = self::db()->prepare(self::baseSelectSql() . "WHERE p.client_id = :cid ORDER BY p.id DESC");
+		$stmt->execute(['cid' => $clientId]);
+		return $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::class);
 	}
 
-
-	public static function getLike($q){
-		$sql = "select * from ".self::$tablename." where name like '%$q%' or description like '%$q%'";
-		$query = Executor::doit($sql);
-		return Model::many($query[0],new PostData());
+	public static function getPublics(): array {
+		$stmt = self::db()->query(
+			self::baseSelectSql() . "WHERE p.is_public = 1 AND c.is_active = 1 ORDER BY p.id DESC"
+		);
+		return $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::class);
 	}
 
+	public static function getFeatureds(int $limit = 12): array {
+		$stmt = self::db()->prepare(
+			self::baseSelectSql() . "WHERE p.is_public = 1 AND p.is_featured = 1 AND c.is_active = 1 ORDER BY p.id DESC LIMIT :lim"
+		);
+		$stmt->bindValue(':lim', $limit, \PDO::PARAM_INT);
+		$stmt->execute();
+		return $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::class);
+	}
 
+	public static function getPublicsByCategory(int $categoryId): array {
+		$stmt = self::db()->prepare(
+			self::baseSelectSql() . "WHERE p.is_public = 1 AND p.category_id = :cid ORDER BY p.id DESC"
+		);
+		$stmt->execute(['cid' => $categoryId]);
+		return $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::class);
+	}
+
+	public static function searchPublic(string $q): array {
+		$like = '%' . $q . '%';
+		$stmt = self::db()->prepare(
+			self::baseSelectSql() .
+			"WHERE p.is_public = 1 AND c.is_active = 1 AND (p.name LIKE :q1 OR p.code LIKE :q2 OR p.description LIKE :q3) " .
+			"ORDER BY p.id DESC"
+		);
+		$stmt->execute(['q1' => $like, 'q2' => $like, 'q3' => $like]);
+		return $stmt->fetchAll(\PDO::FETCH_CLASS | \PDO::FETCH_PROPS_LATE, self::class);
+	}
+
+	public static function delById($id): bool {
+		$stmt = self::db()->prepare("DELETE FROM " . self::$tablename . " WHERE id = :id");
+		return $stmt->execute(['id' => (int)$id]);
+	}
 }
-
-?>

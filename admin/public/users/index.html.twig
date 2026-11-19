@@ -1,0 +1,51 @@
+{% extends "layouts/main.html.twig" %}
+
+{% block title %}Usuarios{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0 fw-bold">Usuarios</h3>
+  <a href="{{ base_url }}/users/new" class="btn btn-primary">
+    <i class="bi bi-plus-circle me-1"></i> Nuevo Usuario
+  </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Nombre</th>
+            <th>Usuario</th>
+            <th>Correo</th>
+            <th>Rol</th>
+            <th>Estado</th>
+            <th class="text-end">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for u in users %}
+          <tr>
+            <td class="fw-semibold">{{ u.name }} {{ u.lastname }}</td>
+            <td>{{ u.username ?: '-' }}</td>
+            <td>{{ u.email }}</td>
+            <td><span class="badge bg-{{ u.role == 'admin' ? 'primary' : 'info text-dark' }}">{{ u.role == 'admin' ? 'Administrador' : 'Editor' }}</span></td>
+            <td><span class="badge bg-{{ u.is_active ? 'success' : 'secondary' }}">{{ u.is_active ? 'Activo' : 'Inactivo' }}</span></td>
+            <td class="text-end text-nowrap">
+              <a href="{{ base_url }}/users/{{ u.id }}/edit" class="btn btn-xs btn-outline-warning"><i class="bi bi-pencil"></i></a>
+              {% if u.id != curr_user.id %}
+              <form method="post" action="{{ base_url }}/users/{{ u.id }}/delete" class="d-inline confirm-post" data-confirm="¿Eliminar usuario {{ u.name }}?">
+                {{ csrf_field() }}
+                <button type="submit" class="btn btn-xs btn-outline-danger"><i class="bi bi-trash"></i></button>
+              </form>
+              {% endif %}
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

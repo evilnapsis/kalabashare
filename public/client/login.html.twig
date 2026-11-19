@@ -1,0 +1,30 @@
+{% extends "layouts/main.html.twig" %}
+
+{% block title %}Iniciar Sesión | {{ site_config.general_main_title|default('KALABASHARE') }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-4">
+  <div class="col-md-5">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <h4 class="fw-bold mb-3 text-center">Iniciar Sesión</h4>
+        <form method="post" action="{{ base_url }}/login">
+          {{ csrf_field() }}
+          <div class="mb-3">
+            <label class="form-label fw-semibold">Correo Electrónico</label>
+            <input type="email" name="email" class="form-control" required autofocus>
+          </div>
+          <div class="mb-4">
+            <label class="form-label fw-semibold">Contraseña</label>
+            <input type="password" name="password" class="form-control" required>
+          </div>
+          <button type="submit" class="btn btn-primary w-100 fw-semibold">Entrar</button>
+        </form>
+        <div class="text-center small mt-3">
+          ¿No tienes cuenta? <a href="{{ base_url }}/register">Regístrate aquí</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,133 @@
+{% extends "layouts/main.html.twig" %}
+
+{% block title %}Dashboard{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h3 class="mb-0 fw-bold">Dashboard</h3>
+  <a href="{{ base_url }}/posts/new" class="btn btn-primary">
+    <i class="bi bi-plus-circle me-1"></i> Nuevo Archivo
+  </a>
+</div>
+
+<div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl-3">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body d-flex align-items-center">
+        <div class="bg-primary bg-opacity-10 text-primary rounded p-3 me-3"><i class="bi bi-file-earmark-arrow-down fs-3"></i></div>
+        <div>
+          <div class="text-muted small">Archivos</div>
+          <div class="fs-4 fw-bold">{{ posts_count }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body d-flex align-items-center">
+        <div class="bg-success bg-opacity-10 text-success rounded p-3 me-3"><i class="bi bi-tags fs-3"></i></div>
+        <div>
+          <div class="text-muted small">Categorías</div>
+          <div class="fs-4 fw-bold">{{ categories_count }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body d-flex align-items-center">
+        <div class="bg-warning bg-opacity-10 text-warning rounded p-3 me-3"><i class="bi bi-person-lines-fill fs-3"></i></div>
+        <div>
+          <div class="text-muted small">Clientes</div>
+          <div class="fs-4 fw-bold">{{ clients_count }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="col-sm-6 col-xl-3">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-body d-flex align-items-center">
+        <div class="bg-info bg-opacity-10 text-info rounded p-3 me-3"><i class="bi bi-eye fs-3"></i></div>
+        <div>
+          <div class="text-muted small">Visitas Totales</div>
+          <div class="fs-4 fw-bold">{{ total_views }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row g-4">
+  <div class="col-lg-7">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white fw-semibold">
+        <i class="bi bi-graph-up me-1 text-primary"></i> Visitas Últimos 30 Días
+      </div>
+      <div class="card-body">
+        <canvas id="viewsChart" height="140"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-lg-5">
+    <div class="card border-0 shadow-sm h-100">
+      <div class="card-header bg-white fw-semibold">
+        <i class="bi bi-star me-1 text-warning"></i> Archivos Más Vistos
+      </div>
+      <div class="card-body p-0">
+        <table class="table table-hover mb-0 no-datatable align-middle">
+          <thead class="table-light">
+            <tr>
+              <th>Archivo</th>
+              <th class="text-end">Visitas</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for tv in top_viewed %}
+            <tr>
+              <td>
+                <div class="fw-semibold small">{{ tv.name }}</div>
+                {% if tv.code %}<div class="text-muted" style="font-size:11px;">{{ tv.code }}</div>{% endif %}
+              </td>
+              <td class="text-end"><span class="badge bg-primary">{{ tv.total_views }}</span></td>
+            </tr>
+            {% else %}
+            <tr>
+              <td colspan="2" class="text-center text-muted py-4">Sin visitas registradas aún.</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+(function() {
+  const ctx = document.getElementById('viewsChart');
+  if (!ctx) return;
+  new Chart(ctx, {
+    type: 'line',
+    data: {
+      labels: {{ chart_labels|raw }},
+      datasets: [{
+        label: 'Visitas',
+        data: {{ chart_views|raw }},
+        borderColor: '#0d9488',
+        backgroundColor: 'rgba(13, 148, 136, 0.12)',
+        fill: true,
+        tension: 0.3
+      }]
+    },
+    options: {
+      responsive: true,
+      plugins: { legend: { display: false } },
+      scales: { y: { beginAtZero: true } }
+    }
+  });
+})();
+</script>
+{% endblock %}

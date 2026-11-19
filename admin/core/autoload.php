@@ -1,30 +1,11 @@
 <?php
 
-include "controller/Core.php";
-include "controller/View.php";
-include "controller/Module.php";
-include "controller/Database.php";
-include "controller/Executor.php";
-include "controller/class.upload.php";
-//# include "controller/Session.php"; [remplazada]
+require_once dirname(__DIR__, 2) . "/vendor/autoload.php";
 
-include "controller/Viewer.php";
-include "controller/IpLogger.php";
-
-// 10 octubre 2014
-include "controller/Model.php";
-include "controller/Bootload.php";
-include "controller/Action.php";
-
-// 13 octubre 2014
-include "controller/Request.php";
-
-
-// 14 octubre 2014
-include "controller/Get.php";
-include "controller/Post.php";
-include "controller/Cookie.php";
-include "controller/Session.php";
-include "controller/Lb.php";
-
-?>
+include __DIR__ . "/controller/Database.php";
+include __DIR__ . "/controller/Req.php";
+include __DIR__ . "/controller/Response.php";
+include __DIR__ . "/controller/ViewEngine.php";
+include __DIR__ . "/controller/Model.php";
+include __DIR__ . "/controller/Session.php";
+include __DIR__ . "/controller/class.upload.php";

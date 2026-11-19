@@ -1,0 +1,49 @@
+{% extends "layouts/main.html.twig" %}
+
+{% block title %}Clientes{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0 fw-bold">Clientes</h3>
+  <a href="{{ base_url }}/clients/new" class="btn btn-primary">
+    <i class="bi bi-plus-circle me-1"></i> Nuevo Cliente
+  </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Nombre</th>
+            <th>Correo</th>
+            <th>Teléfono</th>
+            <th>Archivos</th>
+            <th>Estado</th>
+            <th class="text-end">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in clients %}
+          <tr>
+            <td class="fw-semibold">{{ c.name }} {{ c.lastname }}</td>
+            <td>{{ c.email }}</td>
+            <td>{{ c.phone ?: '-' }}</td>
+            <td><span class="badge bg-dark">{{ c.post_count }}</span></td>
+            <td><span class="badge bg-{{ c.is_active ? 'success' : 'secondary' }}">{{ c.is_active ? 'Activo' : 'Inactivo' }}</span></td>
+            <td class="text-end text-nowrap">
+              <a href="{{ base_url }}/clients/{{ c.id }}/edit" class="btn btn-xs btn-outline-warning"><i class="bi bi-pencil"></i></a>
+              <form method="post" action="{{ base_url }}/clients/{{ c.id }}/delete" class="d-inline confirm-post" data-confirm="¿Eliminar cliente {{ c.name }}?">
+                {{ csrf_field() }}
+                <button type="submit" class="btn btn-xs btn-outline-danger"><i class="bi bi-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

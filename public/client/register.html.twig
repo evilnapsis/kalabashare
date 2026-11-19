@@ -1,0 +1,44 @@
+{% extends "layouts/main.html.twig" %}
+
+{% block title %}Registrarse | {{ site_config.general_main_title|default('KALABASHARE') }}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center py-3">
+  <div class="col-md-6">
+    <div class="card border-0 shadow-sm">
+      <div class="card-body p-4">
+        <h4 class="fw-bold mb-3 text-center">Crear Cuenta</h4>
+        <form method="post" action="{{ base_url }}/register" class="row g-3">
+          {{ csrf_field() }}
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Nombre *</label>
+            <input type="text" name="name" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Apellidos</label>
+            <input type="text" name="lastname" class="form-control">
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Correo Electrónico *</label>
+            <input type="email" name="email" class="form-control" required>
+          </div>
+          <div class="col-md-6">
+            <label class="form-label fw-semibold">Teléfono</label>
+            <input type="text" name="phone" class="form-control">
+          </div>
+          <div class="col-12">
+            <label class="form-label fw-semibold">Contraseña *</label>
+            <input type="password" name="password" class="form-control" required>
+          </div>
+          <div class="col-12">
+            <button type="submit" class="btn btn-primary w-100 fw-semibold">Registrarme</button>
+          </div>
+        </form>
+        <div class="text-center small mt-3">
+          ¿Ya tienes cuenta? <a href="{{ base_url }}/login">Inicia sesión</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

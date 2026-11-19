@@ -1,0 +1,43 @@
+{% extends "layouts/main.html.twig" %}
+
+{% block title %}Editar Categoría{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0 fw-bold">Editar Categoría</h3>
+  <a href="{{ base_url }}/categories" class="btn btn-outline-secondary">Volver</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <form method="post" action="{{ base_url }}/categories/{{ category.id }}/update" class="row g-3">
+      {{ csrf_field() }}
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Nombre *</label>
+        <input type="text" name="name" value="{{ category.name }}" class="form-control" required>
+      </div>
+      <div class="col-md-6">
+        <label class="form-label fw-semibold">Slug</label>
+        <input type="text" name="short_name" value="{{ category.short_name }}" class="form-control">
+      </div>
+      <div class="col-12 d-flex gap-4">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="is_active" id="isActive" {{ category.is_active ? 'checked' : '' }}>
+          <label class="form-check-label" for="isActive">Activa</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="in_menu" id="inMenu" {{ category.in_menu ? 'checked' : '' }}>
+          <label class="form-check-label" for="inMenu">Mostrar en menú superior</label>
+        </div>
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="in_home" id="inHome" {{ category.in_home ? 'checked' : '' }}>
+          <label class="form-check-label" for="inHome">Destacar en inicio</label>
+        </div>
+      </div>
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary px-4"><i class="bi bi-save me-1"></i> Actualizar</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

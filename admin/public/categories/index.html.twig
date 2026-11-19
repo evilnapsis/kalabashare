@@ -1,0 +1,51 @@
+{% extends "layouts/main.html.twig" %}
+
+{% block title %}Categorías{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0 fw-bold">Categorías</h3>
+  <a href="{{ base_url }}/categories/new" class="btn btn-primary">
+    <i class="bi bi-plus-circle me-1"></i> Nueva Categoría
+  </a>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <div class="table-responsive">
+      <table class="table table-hover align-middle">
+        <thead class="table-light">
+          <tr>
+            <th>Nombre</th>
+            <th>Slug</th>
+            <th>Productos</th>
+            <th>En Menú</th>
+            <th>En Inicio</th>
+            <th>Estado</th>
+            <th class="text-end">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for c in categories %}
+          <tr>
+            <td class="fw-semibold">{{ c.name }}</td>
+            <td class="small text-muted">{{ c.short_name }}</td>
+            <td><span class="badge bg-dark">{{ c.post_count }}</span></td>
+            <td><span class="badge bg-{{ c.in_menu ? 'info text-dark' : 'secondary' }}">{{ c.in_menu ? 'Sí' : 'No' }}</span></td>
+            <td><span class="badge bg-{{ c.in_home ? 'primary' : 'secondary' }}">{{ c.in_home ? 'Sí' : 'No' }}</span></td>
+            <td><span class="badge bg-{{ c.is_active ? 'success' : 'secondary' }}">{{ c.is_active ? 'Activa' : 'Inactiva' }}</span></td>
+            <td class="text-end text-nowrap">
+              <a href="{{ base_url }}/categories/{{ c.id }}/edit" class="btn btn-xs btn-outline-warning"><i class="bi bi-pencil"></i></a>
+              <form method="post" action="{{ base_url }}/categories/{{ c.id }}/delete" class="d-inline confirm-post" data-confirm="¿Eliminar categoría {{ c.name }}?">
+                {{ csrf_field() }}
+                <button type="submit" class="btn btn-xs btn-outline-danger"><i class="bi bi-trash"></i></button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+{% endblock %}

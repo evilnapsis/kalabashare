@@ -1,0 +1,54 @@
+{% extends "layouts/main.html.twig" %}
+
+{% block title %}Nuevo Usuario{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-3">
+  <h3 class="mb-0 fw-bold">Nuevo Usuario</h3>
+  <a href="{{ base_url }}/users" class="btn btn-outline-secondary">Volver</a>
+</div>
+
+<div class="card border-0 shadow-sm">
+  <div class="card-body">
+    <form method="post" action="{{ base_url }}/users/create" class="row g-3">
+      {{ csrf_field() }}
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Nombre *</label>
+        <input type="text" name="name" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Apellidos</label>
+        <input type="text" name="lastname" class="form-control">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Usuario</label>
+        <input type="text" name="username" class="form-control">
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Correo *</label>
+        <input type="email" name="email" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Contraseña *</label>
+        <input type="password" name="password" class="form-control" required>
+      </div>
+      <div class="col-md-4">
+        <label class="form-label fw-semibold">Rol</label>
+        <select name="role" class="form-select">
+          <option value="admin">Administrador</option>
+          <option value="editor">Editor</option>
+        </select>
+      </div>
+      <div class="col-12">
+        <div class="form-check">
+          <input class="form-check-input" type="checkbox" name="is_active" id="isActive" checked>
+          <label class="form-check-label" for="isActive">Activo</label>
+        </div>
+      </div>
+      <div class="col-12 text-end">
+        <button type="submit" class="btn btn-primary px-4"><i class="bi bi-save me-1"></i> Guardar</button>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}
